@@ -11,8 +11,8 @@ module Octokit
       # @param repo [Integer, String, Hash, Repository] A GitHub repository
       # @return [Hash] key_id and key
       # @see https://docs.github.com/en/rest/dependabot/alerts#list-dependabot-alerts-for-a-repository
-      def get_dependabot_alerts(repo)
-        get "#{Repository.path repo}/dependabot/alerts"
+      def get_dependabot_alerts(repo, options = {})
+        paginate "#{Repository.path repo}/dependabot/alerts", options
       end
 
       # # Get public key for secrets encryption

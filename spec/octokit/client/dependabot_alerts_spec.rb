@@ -5,22 +5,17 @@ describe Octokit::Client::DependabotAlerts do
     Octokit.reset!
     @client = oauth_client
   end
-  context 'with a repo' do
-    before(:each) do
-      @repo = @client.create_repository('repo-alerts')
+
+  describe '.get_dependabot_alerts', :vcr do
+    it 'lists all dependabot alerts' do
+      alerts = @client.get_dependabot_alerts('octokit/octokit.rb')
+      expect(alerts).to be_kind_of Array
+      assert_requested :get, github_url("/repos/octokit/octokit.rb/dependabot/alerts")
     end
-
-    after(:each) do
-      @client.delete_repository(@repo.full_name) unless @repo.nil?
-    rescue Octokit::NotFound
+    it 'lists all dependabot alerts with state option' do
+      alerts = @client.get_dependabot_alerts('octokit/octokit.rb', state: 'open')
+      expect(alerts).to be_kind_of Array
+      assert_requested :get, github_url("/repos/octokit/octokit.rb/dependabot/alerts?state=open")
     end
-
-    describe '.get_dependabot_alerts', :vcr do
-      it 'get repo specific dependabot alerts' do
-        box = create_box(@client.get_dependabot_alerts(@repo.id))
-        expect(box[:key_id]).not_to be_empty
-      end
-    end # .get_public_key
-  end
-
+  end # .get_dependabot_alerts
 end
